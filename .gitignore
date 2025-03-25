@@ -1,0 +1,25 @@
+*.pyc
+__pycache__/
+
+# Environnement virtuel
+venv/
+env/
+
+# Fichiers spécifiques à Django
+db.sqlite3
+*.log
+media/
+# static/
+
+# Variables d'environnement
+.env
+
+# Fichiers de l'éditeur
+.vscode/
+.idea/
+*.sublime-*
+*~
+
+# Fichiers du système d'exploitation
+Thumbs.db
+.DS_Store
