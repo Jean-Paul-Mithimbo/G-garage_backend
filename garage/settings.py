@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
      # Apps du garage
-    'humains',
+    'ressources_humaine',
     'stock',
     'interventions',
     'tresorerie',

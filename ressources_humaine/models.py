@@ -16,7 +16,7 @@ class Employe(models.Model):
         ('Licencié', 'Licencié'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     poste = models.CharField(max_length=50, choices=POSTE_CHOICES)
