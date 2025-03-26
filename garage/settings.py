@@ -82,9 +82,13 @@ WSGI_APPLICATION = 'garage.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'g-garage',        # Nom de la base de données
+        'USER': 'jp',                 # de l'utilisateur
+        'PASSWORD': '1234', # Mot de passe de l'utilisateur
+        'HOST': 'localhost',                 # Adresse de l'hôte (ou IP)
+        'PORT': '3306',                      # Port par défaut de PostgreSQL
+    },
 }
 
 

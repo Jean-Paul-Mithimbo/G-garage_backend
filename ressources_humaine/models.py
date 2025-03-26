@@ -29,7 +29,7 @@ class Employe(models.Model):
     def __str__(self):
         return f"{self.nom} {self.prenom} - {self.poste}"
 
-# 🔹 2. Modèle des contrats
+#  Modèle des contrats
 class Contrat(models.Model):
     TYPE_CONTRAT_CHOICES = [
         ('CDI', 'CDI'),
@@ -47,7 +47,7 @@ class Contrat(models.Model):
     def __str__(self):
         return f"Contrat {self.type_contrat} - {self.employe.nom} {self.employe.prenom}"
 
-# 🔹 3. Modèle du planning des employés
+#  Modèle du planning des employés
 class Planning(models.Model):
     employe = models.ForeignKey(Employe, on_delete=models.CASCADE)
     jour = models.CharField(max_length=10, choices=[
@@ -61,7 +61,7 @@ class Planning(models.Model):
     def __str__(self):
         return f"{self.employe.nom} {self.employe.prenom} - {self.jour}: {self.heure_debut} à {self.heure_fin}"
 
-# 🔹 4. Modèle des congés
+#  Modèle des congés
 class Conge(models.Model):
     employe = models.ForeignKey(Employe, on_delete=models.CASCADE)
     date_debut = models.DateField()
@@ -76,7 +76,7 @@ class Conge(models.Model):
     def __str__(self):
         return f"Congé {self.employe.nom} {self.employe.prenom} - {self.date_debut} à {self.date_fin}"
 
-# 🔹 5. Modèle des paiements
+#  Modèle des paiements
 class Paiement(models.Model):
     employe = models.ForeignKey(Employe, on_delete=models.CASCADE)
     mois = models.CharField(max_length=20, choices=[
