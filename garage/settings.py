@@ -43,8 +43,11 @@ INSTALLED_APPS = [
     'interventions',
     'tresorerie',
     'clients',
+    'authentication',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
 ]
+AUTH_USER_MODEL = 'authentication.CustomUser'  # Utilisation du modèle personnalisé
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -91,6 +94,32 @@ DATABASES = {
     },
 }
 
+# Configuration DRF pour utiliser JWT
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',  # Permet d'utiliser JSON pour les API
+        'rest_framework.renderers.BrowsableAPIRenderer',  # Active l'interface de navigation
+    ],
+}
+from datetime import timedelta
+
+# Configuration des tokens JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,  # Clé de signature, souvent le même que SECRET_KEY
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
