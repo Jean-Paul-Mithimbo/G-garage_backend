@@ -1,6 +1,5 @@
 from django.db import models
 
-# Modèle Client
 class Client(models.Model):
     id = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=255)
@@ -10,7 +9,6 @@ class Client(models.Model):
     def __str__(self):
         return self.nom
 
-# Modèle Devis
 class Devis(models.Model):
     id = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client, related_name='devis', on_delete=models.CASCADE)
@@ -22,7 +20,6 @@ class Devis(models.Model):
     def __str__(self):
         return f"Devis {self.id} pour {self.client.nom}"
 
-# Modèle Facture
 class Facture(models.Model):
     id = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client, related_name='factures', on_delete=models.CASCADE)
@@ -34,7 +31,6 @@ class Facture(models.Model):
     def __str__(self):
         return f"Facture {self.id} pour {self.client.nom}"
 
-# Modèle Paiement
 class Paiement(models.Model):
     id = models.AutoField(primary_key=True)
     facture = models.ForeignKey(Facture, related_name='paiements', on_delete=models.CASCADE)
@@ -44,7 +40,6 @@ class Paiement(models.Model):
     def __str__(self):
         return f"Paiement {self.id} pour la facture {self.facture.id}"
 
-# Modèle Abonnement
 class Abonnement(models.Model):
     id = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client, related_name='abonnements', on_delete=models.CASCADE)
@@ -55,7 +50,6 @@ class Abonnement(models.Model):
     def __str__(self):
         return f"Abonnement {self.id} pour {self.client.nom}"
 
-# Modèle Programme de fidélité
 class Fidélité(models.Model):
     id = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client, related_name='fidélites', on_delete=models.CASCADE)
