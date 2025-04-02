@@ -1,35 +1,41 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Client, Devis, Facture, Paiement, Abonnement, Fidélité
+from .serializers import (
+    ClientSerializer, DevisSerializer, FactureSerializer, 
+    PaiementSerializer, AbonnementSerializer, FideliteSerializer
+)
 
-def liste_clients(request):
-    clients = Client.objects.all()
-    return render(request, 'clients/liste_clients.html', {'clients': clients})
+class ListeClients(generics.ListAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
 
-def detail_client(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
-    return render(request, 'clients/detail_client.html', {'client': client})
+class DetailClient(generics.RetrieveAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
 
-def liste_devis(request):
-    devis = Devis.objects.all()
-    return render(request, 'devis/liste_devis.html', {'devis': devis})
+class ListeDevis(generics.ListAPIView):
+    queryset = Devis.objects.all()
+    serializer_class = DevisSerializer
 
-def liste_factures(request):
-    factures = Facture.objects.all()
-    return render(request, 'factures/liste_factures.html', {'factures': factures})
+class ListeFactures(generics.ListAPIView):
+    queryset = Facture.objects.all()
+    serializer_class = FactureSerializer
 
-def liste_paiements(request):
-    paiements = Paiement.objects.all()
-    return render(request, 'paiements/liste_paiements.html', {'paiements': paiements})
+class ListePaiements(generics.ListAPIView):
+    queryset = Paiement.objects.all()
+    serializer_class = PaiementSerializer
 
-def liste_abonnements(request):
-    abonnements = Abonnement.objects.all()
-    return render(request, 'abonnements/liste_abonnements.html', {'abonnements': abonnements})
+class ListeAbonnements(generics.ListAPIView):
+    queryset = Abonnement.objects.all()
+    serializer_class = AbonnementSerializer
 
-def liste_fidelites(request):
-    fidelites = Fidélité.objects.all()
-    return render(request, 'fidelites/liste_fidelites.html', {'fidelites': fidelites})
+class ListeFidelites(generics.ListAPIView):
+    queryset = Fidélité.objects.all()
+    serializer_class = FideliteSerializer
 
-def verifier_statut_facture(request, facture_id):
-    facture = get_object_or_404(Facture, id=facture_id)
-    return JsonResponse({'facture_id': facture.id, 'statut': facture.statut})
+class VerifierStatutFacture(APIView):
+    def get(self, request, pk, format=None):
+        facture = generics.get_object_or_404(Facture, pk=pk)
+        return Response({'facture_id': facture.id, 'statut': facture.statut})

@@ -1,49 +1,62 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
-from rest_framework import viewsets
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.utils import timezone
 from .models import Client, Vehicule, Panne, EquipeReparation, Intervention, HistoriqueReparation
+from .serializers import (
+    ClientSerializer, VehiculeSerializer, PanneSerializer, EquipeReparationSerializer,
+    InterventionSerializer, HistoriqueReparationSerializer
+)
 
-def liste_clients(request):
-    clients = Client.objects.all()
-    return render(request, 'clients/liste_clients.html', {'clients': clients})
+class ListeClients(generics.ListAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
 
-def detail_client(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
-    return render(request, 'clients/detail_client.html', {'client': client})
+class DetailClient(generics.RetrieveAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
 
-def liste_vehicules(request):
-    vehicules = Vehicule.objects.all()
-    return render(request, 'vehicules/liste_vehicules.html', {'vehicules': vehicules})
+class ListeVehicules(generics.ListAPIView):
+    queryset = Vehicule.objects.all()
+    serializer_class = VehiculeSerializer
 
-def liste_pannes(request):
-    pannes = Panne.objects.all()
-    return render(request, 'pannes/liste_pannes.html', {'pannes': pannes})
+class ListePannes(generics.ListAPIView):
+    queryset = Panne.objects.all()
+    serializer_class = PanneSerializer
 
-def liste_equipes(request):
-    equipes = EquipeReparation.objects.all()
-    return render(request, 'equipes/liste_equipes.html', {'equipes': equipes})
+class ListeEquipes(generics.ListAPIView):
+    queryset = EquipeReparation.objects.all()
+    serializer_class = EquipeReparationSerializer
 
-def liste_interventions(request):
-    interventions = Intervention.objects.all()
-    return render(request, 'interventions/liste_interventions.html', {'interventions': interventions})
+class ListeInterventions(generics.ListAPIView):
+    queryset = Intervention.objects.all()
+    serializer_class = InterventionSerializer
 
-def liste_historiques(request):
-    historiques = HistoriqueReparation.objects.all()
-    return render(request, 'historiques/liste_historiques.html', {'historiques': historiques})
+class ListeHistoriques(generics.ListAPIView):
+    queryset = HistoriqueReparation.objects.all()
+    serializer_class = HistoriqueReparationSerializer
 
-def affecter_equipe(request, intervention_id, equipe_id):
-    intervention = get_object_or_404(Intervention, id=intervention_id)
-    equipe = get_object_or_404(EquipeReparation, id=equipe_id)
-    intervention.equipe = equipe
-    intervention.save()
-    return JsonResponse({'message': f'Équipe {equipe.nom} affectée à l\'intervention {intervention.id}.'})
+class AffecterEquipe(APIView):
+    def post(self, request, intervention_id, equipe_id, format=None):
+        try:
+            intervention = Intervention.objects.get(id=intervention_id)
+            equipe = EquipeReparation.objects.get(id=equipe_id)
+            intervention.equipe = equipe
+            intervention.save()
+            return Response({'message': f'Équipe {equipe.nom} affectée à l\'intervention {intervention.id}.'})
+        except (Intervention.DoesNotExist, EquipeReparation.DoesNotExist):
+            return Response({'error': 'Intervention ou équipe introuvable.'}, status=404)
 
-def cloturer_intervention(request, intervention_id):
-    intervention = get_object_or_404(Intervention, id=intervention_id)
-    if intervention.statut == 'en_cours':
-        intervention.statut = 'terminee'
-        intervention.date_fin_reelle = timezone.now()
-        intervention.save()
-        HistoriqueReparation.objects.create(intervention=intervention, details="Intervention terminée et archivée.")
-        return JsonResponse({'message': f'Intervention {intervention.id} clôturée et archivée.'})
-    return JsonResponse({'error': 'Intervention déjà clôturée ou annulée.'})
+class CloturerIntervention(APIView):
+    def post(self, request, intervention_id, format=None):
+        try:
+            intervention = Intervention.objects.get(id=intervention_id)
+            if intervention.statut == 'en_cours':
+                intervention.statut = 'terminee'
+                intervention.date_fin_reelle = timezone.now()
+                intervention.save()
+                HistoriqueReparation.objects.create(intervention=intervention, details="Intervention terminée et archivée.")
+                return Response({'message': f'Intervention {intervention.id} clôturée et archivée.'})
+            return Response({'error': 'Intervention déjà clôturée ou annulée.'}, status=400)
+        except Intervention.DoesNotExist:
+            return Response({'error': 'Intervention introuvable.'}, status=404)
