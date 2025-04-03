@@ -1,4 +1,5 @@
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 #  Modèle des employés
@@ -21,7 +22,7 @@ class Employe(models.Model):
     prenom = models.CharField(max_length=100)
     poste = models.CharField(max_length=50, choices=POSTE_CHOICES)
     salaire_base = models.DecimalField(max_digits=10, decimal_places=2)
-    contact = models.CharField(max_length=100)
+    contact = PhoneNumberField(unique=True, blank=False, region="CD")
     email = models.EmailField(unique=True)
     date_embauche = models.DateField()
     statut = models.CharField(max_length=50, choices=STATUT_CHOICES, default='Actif')
