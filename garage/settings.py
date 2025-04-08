@@ -48,11 +48,17 @@ INSTALLED_APPS = [
 
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'authentication.backends.PhoneNumberBackend',  # Backend personnalisé
+    'django.contrib.auth.backends.ModelBackend',  # Backend par défaut
+]
+
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Ensure this is above CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -152,3 +158,27 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS configuration
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (use with caution in production)
+
+CORS_ALLOW_CREDENTIALS = True  # Allow cookies to be sent with cross-origin requests
+
+# # Optional: Allow specific headers
+# CORS_ALLOW_HEADERS = [
+#     'content-type',
+#     'authorization',
+#     'x-csrftoken',
+#     'x-requested-with',
+# ]
+
+# # Optional: Allow specific HTTP methods
+# CORS_ALLOW_METHODS = [
+#     'GET',
+#     'POST',
+#     'PUT',
+#     'PATCH',
+#     'DELETE',
+#     'OPTIONS',
+# ]
+
