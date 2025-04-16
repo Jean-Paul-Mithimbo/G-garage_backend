@@ -1,6 +1,4 @@
 from django.db import models
-
-# Create your models here.
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
 from phonenumbers import parse, is_valid_number, NumberParseException
@@ -9,11 +7,13 @@ from phonenumbers import parse, is_valid_number, NumberParseException
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ('admin', 'Admin'),
-        ('mecanicien', 'Mécanicien'),
+        ('gerant', 'Gérant'),
         ('receptionniste', 'Réceptionniste'),
         ('comptable', 'Comptable'),
+        ('autre', 'Autre'),
+        
     ]
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='mecanicien')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='autre')
     contact = PhoneNumberField(unique=True, blank=False, region="CD")
 
     # Réintégration des champs username et last_name
@@ -25,11 +25,11 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['username', 'email', 'first_name', 'last_name']
 
     def save(self, *args, **kwargs):
-        if isinstance(self.contact, int):
-            raise ValueError("Le champ 'contact' doit être une chaîne de caractères valide.")
+        # Convertir le numéro en chaîne pour éviter l'erreur lors du parsing
+        contact_str = str(self.contact)
         try:
-            parsed_number = parse(self.contact, "CD")
-            if not is_valid_number(parsed_number):
+            parsed_number = parse(contact_str, "CD")  # Parse the number with the region "CD" (Congo)
+            if not is_valid_number(parsed_number):  # Check if the number is valid
                 raise ValueError("Le numéro de téléphone fourni n'est pas valide.")
         except NumberParseException:
             raise ValueError("Le numéro de téléphone fourni n'est pas valide.")
