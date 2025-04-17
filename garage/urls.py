@@ -19,7 +19,11 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('authentication.urls')),
-    path('api/grh/', include('ressources_humaine.urls')),
-    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/rgh/', include('ressources_humaine.urls')),
+    path('api/clients/', include('clients.urls')),
+    path('api/interventions/', include('interventions.urls')),
+    path('api/stock/', include('stock.urls')),
+    path('api/tresorerie/', include('tresorerie.urls')),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

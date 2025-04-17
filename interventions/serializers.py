@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (
-    Vehicule, Panne, Intervention, LignePanne, MaterielUtilise, Facture, HistoriqueReparation
+    Vehicule, Panne, EquipeReparation,Intervention, LignePanne, MaterielUtilise, Facture, HistoriqueReparation
 )
 
 class VehiculeSerializer(serializers.ModelSerializer):
@@ -11,6 +11,10 @@ class VehiculeSerializer(serializers.ModelSerializer):
 class PanneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Panne
+        fields = '__all__'
+class EquipeReparationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EquipeReparation
         fields = '__all__'
 
 class InterventionSerializer(serializers.ModelSerializer):

@@ -2,11 +2,11 @@ from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
-from .models import Client, Vehicule, Panne, EquipeReparation, Intervention, Facture, HistoriqueReparation, LignePanne, MaterielUtilise
+from .models import Vehicule, Panne, EquipeReparation, Intervention, Facture, HistoriqueReparation, LignePanne, MaterielUtilise
 from clients.models import Client
 from clients.serializers import ClientSerializer
 from .serializers import (
-    VehiculeSerializer, PanneSerializer, EquipeReparationSerializer,
+    VehiculeSerializer, PanneSerializer,EquipeReparationSerializer,
     InterventionSerializer, FactureSerializer, HistoriqueReparationSerializer,
     LignePanneSerializer, MaterielUtiliseSerializer
 )
