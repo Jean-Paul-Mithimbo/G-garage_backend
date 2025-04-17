@@ -1,10 +1,12 @@
 from django.contrib import admin
 from .models import Client, Devis, Abonnement, Fidélité
 
-@admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'contact', 'historique_interventions')
-    search_fields = ('nom', 'contact')
+# Check if the model is already registered
+if not admin.site.is_registered(Client):
+    @admin.register(Client)
+    class ClientAdmin(admin.ModelAdmin):
+        list_display = ['id', 'nom', 'contact']
+        search_fields = ['nom', 'contact']
 
 @admin.register(Devis)
 class DevisAdmin(admin.ModelAdmin):

@@ -1,78 +1,44 @@
 from django.db import models
-from django.utils import timezone
 
 # Modèle Fournisseur
 class Fournisseur(models.Model):
-    id = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=255)
     contact = models.CharField(max_length=255)
     adresse = models.TextField()
-    liste_produits = models.TextField()
 
     def __str__(self):
         return self.nom
 
-# Modèle Stock (Pièces de rechange)
-class Stock(models.Model):
-    id = models.AutoField(primary_key=True)
-    reference = models.CharField(max_length=100, unique=True)
+# Modèle Article (Caractéristiques des articles)
+class Article(models.Model):
     nom = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    caracteristiques = models.JSONField(default=dict)  # Store characteristics as key-value pairs
+
+    def __str__(self):
+        return self.nom
+
+# Modèle Stock (Gestion du stock des articles)
+class Stock(models.Model):
+    article = models.OneToOneField(Article, related_name='stock', on_delete=models.CASCADE, null=True, blank=True)  # Allow null values default=1)  # Use the ID of a default Article
     quantite = models.PositiveIntegerField()
-    fournisseur = models.ForeignKey(Fournisseur, related_name='stocks', on_delete=models.CASCADE)
     seuil_alerte = models.PositiveIntegerField(default=10)  # Seuil d'alerte de stock bas
+    prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)  # Prix unitaire
 
     def est_en_alerte(self):
         return self.quantite <= self.seuil_alerte
 
-    def __str__(self):
-        return f"{self.nom} ({self.reference})"
+    def ajouter_quantite(self, quantite):
+        """Augmente la quantité en stock."""
+        self.quantite += quantite
+        self.save()
 
-# Modèle Commande
-class Commande(models.Model):
-    id = models.AutoField(primary_key=True)
-    fournisseur = models.ForeignKey(Fournisseur, related_name='commandes', on_delete=models.CASCADE)
-    date_commande = models.DateTimeField(auto_now_add=True)
-    statut = models.CharField(max_length=50, choices=[
-        ('en_attente', 'En attente'),
-        ('expediee', 'Expédiée'),
-        ('livree', 'Livrée'),
-        ('annulee', 'Annulée')
-    ], default='en_attente')
+    def diminuer_quantite(self, quantite):
+        """Diminue la quantité en stock."""
+        if self.quantite < quantite:
+            raise ValueError(f"Stock insuffisant pour {self.article.nom}.")
+        self.quantite -= quantite
+        self.save()
 
     def __str__(self):
-        return f"Commande {self.id} - {self.fournisseur.nom}"
-
-# Modèle DétailCommande (Pièces commandées)
-class DétailCommande(models.Model):
-    id = models.AutoField(primary_key=True)
-    commande = models.ForeignKey(Commande, related_name='details', on_delete=models.CASCADE)
-    stock = models.ForeignKey(Stock, related_name='commandes', on_delete=models.CASCADE)
-    quantite = models.PositiveIntegerField()
-
-    def __str__(self):
-        return f"{self.quantite} x {self.stock.nom} pour Commande {self.commande.id}"
-
-# Modèle Livraison
-class Livraison(models.Model):
-    id = models.AutoField(primary_key=True)
-    commande = models.OneToOneField(Commande, related_name='livraison', on_delete=models.CASCADE)
-    date_livraison = models.DateTimeField(null=True, blank=True)
-    statut = models.CharField(max_length=50, choices=[
-        ('en_cours', 'En cours'),
-        ('livree', 'Livrée'),
-        ('retournee', 'Retournée')
-    ], default='en_cours')
-
-    def __str__(self):
-        return f"Livraison {self.id} - {self.commande.fournisseur.nom}"
-
-# Modèle Retour (Pièces retournées)
-class Retour(models.Model):
-    id = models.AutoField(primary_key=True)
-    livraison = models.ForeignKey(Livraison, related_name='retours', on_delete=models.CASCADE)
-    stock = models.ForeignKey(Stock, related_name='retours', on_delete=models.CASCADE)
-    quantite = models.PositiveIntegerField()
-    raison = models.TextField()
-
-    def __str__(self):
-        return f"Retour {self.id} - {self.stock.nom} ({self.quantite})"
+        return f"Stock de {self.article.nom} - Quantité: {self.quantite}"

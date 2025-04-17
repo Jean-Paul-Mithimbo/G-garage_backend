@@ -1,16 +1,20 @@
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
-from .models import Client, Vehicule, Panne, EquipeReparation, Intervention, HistoriqueReparation
+from .models import Client, Vehicule, Panne, EquipeReparation, Intervention, Facture, HistoriqueReparation, LignePanne, MaterielUtilise
+from clients.models import Client
+from clients.serializers import ClientSerializer
 from .serializers import (
-    ClientSerializer, VehiculeSerializer, PanneSerializer, EquipeReparationSerializer,
-    InterventionSerializer, HistoriqueReparationSerializer
+    VehiculeSerializer, PanneSerializer, EquipeReparationSerializer,
+    InterventionSerializer, FactureSerializer, HistoriqueReparationSerializer,
+    LignePanneSerializer, MaterielUtiliseSerializer
 )
 
-class ListeClients(generics.ListAPIView):
-    queryset = Client.objects.all()
-    serializer_class = ClientSerializer
+
+# class ListeClients(generics.ListAPIView):
+#     queryset = Client.objects.all()
+#     serializer_class = ClientSerializer
 
 class DetailClient(generics.RetrieveAPIView):
     queryset = Client.objects.all()
@@ -60,3 +64,31 @@ class CloturerIntervention(APIView):
             return Response({'error': 'Intervention déjà clôturée ou annulée.'}, status=400)
         except Intervention.DoesNotExist:
             return Response({'error': 'Intervention introuvable.'}, status=404)
+
+class VehiculeViewSet(viewsets.ModelViewSet):
+    queryset = Vehicule.objects.all()
+    serializer_class = VehiculeSerializer
+
+class PanneViewSet(viewsets.ModelViewSet):
+    queryset = Panne.objects.all()
+    serializer_class = PanneSerializer
+
+class InterventionViewSet(viewsets.ModelViewSet):
+    queryset = Intervention.objects.all()
+    serializer_class = InterventionSerializer
+
+class LignePanneViewSet(viewsets.ModelViewSet):
+    queryset = LignePanne.objects.all()
+    serializer_class = LignePanneSerializer
+
+class MaterielUtiliseViewSet(viewsets.ModelViewSet):
+    queryset = MaterielUtilise.objects.all()
+    serializer_class = MaterielUtiliseSerializer
+
+class FactureViewSet(viewsets.ModelViewSet):
+    queryset = Facture.objects.all()
+    serializer_class = FactureSerializer
+
+class HistoriqueReparationViewSet(viewsets.ModelViewSet):
+    queryset = HistoriqueReparation.objects.all()
+    serializer_class = HistoriqueReparationSerializer
