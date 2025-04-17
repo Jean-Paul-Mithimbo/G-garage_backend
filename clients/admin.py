@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Client, Devis, Facture, Paiement, Abonnement, Fidélité
+from .models import Client, Devis, Abonnement, Fidélité
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
@@ -12,17 +12,17 @@ class DevisAdmin(admin.ModelAdmin):
     list_filter = ('statut', 'date_creation')
     search_fields = ('client__nom',)
 
-@admin.register(Facture)
-class FactureAdmin(admin.ModelAdmin):
-    list_display = ('client', 'montant', 'date_creation', 'date_echeance', 'statut')
-    list_filter = ('statut', 'date_creation')
-    search_fields = ('client__nom',)
+# @admin.register(Facture)
+# class FactureAdmin(admin.ModelAdmin):
+#     list_display = ('client', 'montant', 'date_creation', 'date_echeance', 'statut')
+#     list_filter = ('statut', 'date_creation')
+#     search_fields = ('client__nom',)
 
-@admin.register(Paiement)
-class PaiementAdmin(admin.ModelAdmin):
-    list_display = ('facture', 'montant', 'date_paiement')
-    list_filter = ('date_paiement',)
-    search_fields = ('facture__client__nom',)
+# @admin.register(Paiement)
+# class PaiementAdmin(admin.ModelAdmin):
+#     list_display = ('facture', 'montant', 'date_paiement')
+#     list_filter = ('date_paiement',)
+#     search_fields = ('facture__client__nom',)
 
 @admin.register(Abonnement)
 class AbonnementAdmin(admin.ModelAdmin):

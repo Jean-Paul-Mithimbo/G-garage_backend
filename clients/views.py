@@ -1,10 +1,9 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Client, Devis, Facture, Paiement, Abonnement, Fidélité
+from .models import Client, Devis, Abonnement, Fidélité
 from .serializers import (
-    ClientSerializer, DevisSerializer, FactureSerializer, 
-    PaiementSerializer, AbonnementSerializer, FideliteSerializer
+    ClientSerializer, DevisSerializer, AbonnementSerializer, FideliteSerializer
 )
 
 class ListeClients(generics.ListAPIView):
@@ -19,13 +18,13 @@ class ListeDevis(generics.ListAPIView):
     queryset = Devis.objects.all()
     serializer_class = DevisSerializer
 
-class ListeFactures(generics.ListAPIView):
-    queryset = Facture.objects.all()
-    serializer_class = FactureSerializer
+# class ListeFactures(generics.ListAPIView):
+#     queryset = Facture.objects.all()
+#     serializer_class = FactureSerializer
 
-class ListePaiements(generics.ListAPIView):
-    queryset = Paiement.objects.all()
-    serializer_class = PaiementSerializer
+# class ListePaiements(generics.ListAPIView):
+#     queryset = Paiement.objects.all()
+#     serializer_class = PaiementSerializer
 
 class ListeAbonnements(generics.ListAPIView):
     queryset = Abonnement.objects.all()
