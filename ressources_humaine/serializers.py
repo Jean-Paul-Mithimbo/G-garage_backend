@@ -37,3 +37,4 @@ class PaiementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paiement
         fields = ['id', 'employe', 'employe_nom', 'employe_prenom', 'mois', 'annee', 'salaire_net']
+        

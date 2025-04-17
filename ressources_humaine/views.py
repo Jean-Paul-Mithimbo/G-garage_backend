@@ -23,4 +23,3 @@ class PaiementViewSet(viewsets.ModelViewSet):
     queryset = Paiement.objects.all()
     serializer_class = PaiementSerializer
 
-# Create your views here.
