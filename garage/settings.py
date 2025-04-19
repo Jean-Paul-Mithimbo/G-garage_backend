@@ -23,7 +23,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-=+x_&#fk&dx_x$*02ha
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.100']  # Add your server's IP address
 
 # Application definition
 
@@ -166,21 +166,4 @@ CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (use with caution in producti
 
 CORS_ALLOW_CREDENTIALS = True  # Allow cookies to be sent with cross-origin requests
 
-# # Optional: Allow specific headers
-# CORS_ALLOW_HEADERS = [
-#     'content-type',
-#     'authorization',
-#     'x-csrftoken',
-#     'x-requested-with',
-# ]
-
-# # Optional: Allow specific HTTP methods
-# CORS_ALLOW_METHODS = [
-#     'GET',
-#     'POST',
-#     'PUT',
-#     'PATCH',
-#     'DELETE',
-#     'OPTIONS',
-# ]
-
+# Optional: Allow specific headers if neededproducti

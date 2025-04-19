@@ -4,7 +4,7 @@ class Client(models.Model):
     id = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=255)
     contact = models.CharField(max_length=255)
-    historique_interventions = models.TextField(blank=True)
+ 
 
     def __str__(self):
         return self.nom
