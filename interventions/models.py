@@ -27,8 +27,9 @@ class Vehicule(models.Model):
 # Modèle Panne
 class Panne(models.Model):
     id = models.AutoField(primary_key=True)
+    nom= models.CharField(max_length=100)
     description = models.TextField()
-    date_signalement = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return f"Panne {self.id} - {self.description[:50]}"
@@ -61,6 +62,8 @@ class LignePanne(models.Model):
     id = models.AutoField(primary_key=True)
     intervention = models.ForeignKey(Intervention, related_name='lignes_pannes', on_delete=models.CASCADE)
     panne = models.ForeignKey(Panne, related_name='lignes_pannes', on_delete=models.CASCADE)
+    description=models.TextField()
+    date_signalement = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Panne {self.panne.id} liée à Intervention {self.intervention.id}"

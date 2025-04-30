@@ -10,7 +10,7 @@ class VehiculeAdmin(admin.ModelAdmin):
 
 @admin.register(Panne)
 class PanneAdmin(admin.ModelAdmin):
-    list_display = ['id', 'description', 'date_signalement']
+    list_display = ['id', 'nom','description']
     search_fields = ['description']
 
 @admin.register(Intervention)
@@ -21,7 +21,7 @@ class InterventionAdmin(admin.ModelAdmin):
 
 @admin.register(LignePanne)
 class LignePanneAdmin(admin.ModelAdmin):
-    list_display = ['id', 'intervention', 'panne']
+    list_display = ['id', 'intervention', 'panne','description','date_signalement']
     search_fields = ['panne__description']
 
 @admin.register(MaterielUtilise)
