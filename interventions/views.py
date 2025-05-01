@@ -28,7 +28,7 @@ class ListePannes(generics.ListAPIView):
     queryset = Panne.objects.all()
     serializer_class = PanneSerializer
 
-class ListeEquipes(generics.ListAPIView):
+class EquipesViewSet(viewsets.ModelViewSet):
     queryset = EquipeReparation.objects.all()
     serializer_class = EquipeReparationSerializer
 

@@ -5,8 +5,8 @@ from .models import (
 
 @admin.register(Vehicule)
 class VehiculeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'client', 'marque', 'modele', 'immatriculation']
-    search_fields = ['immatriculation', 'marque', 'modele']
+    list_display = ['marque', 'modele']
+    search_fields = ['marque', 'modele']
 
 @admin.register(Panne)
 class PanneAdmin(admin.ModelAdmin):
@@ -15,7 +15,7 @@ class PanneAdmin(admin.ModelAdmin):
 
 @admin.register(Intervention)
 class InterventionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'vehicule', 'equipe', 'date_debut', 'statut']
+    list_display = ['id', 'vehicule','immatriculation','client','equipe', 'date_debut','date_fin_prevue','date_fin_reelle', 'statut']
     list_filter = ['statut', 'equipe']
     search_fields = ['vehicule__immatriculation']
 

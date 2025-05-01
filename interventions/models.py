@@ -14,15 +14,13 @@ from stock.models import Stock
 
 # Modèle Véhicule
 class Vehicule(models.Model):
-    id = models.AutoField(primary_key=True)
-    client = models.ForeignKey(Client, related_name='vehicules', on_delete=models.CASCADE)
     marque = models.CharField(max_length=100)
     modele = models.CharField(max_length=100)
-    immatriculation = models.CharField(max_length=50, unique=True)
-    annee = models.IntegerField()
+    
+    
 
     def __str__(self):
-        return f"{self.marque} {self.modele} - {self.immatriculation}"
+        return f"{self.marque} {self.modele}"
 
 # Modèle Panne
 class Panne(models.Model):
@@ -48,6 +46,8 @@ class EquipeReparation(models.Model):
 class Intervention(models.Model):
     id = models.AutoField(primary_key=True)
     vehicule = models.ForeignKey(Vehicule, related_name='interventions', on_delete=models.CASCADE, null=True, blank=True)  # Allow null values
+    immatriculation = models.CharField(max_length=50, unique=True)
+    client = models.ForeignKey(Client, related_name='vehicules', on_delete=models.CASCADE)
     equipe = models.ForeignKey(EquipeReparation, related_name='interventions', on_delete=models.SET_NULL, null=True)
     date_debut = models.DateTimeField(auto_now_add=True)
     date_fin_prevue = models.DateTimeField()
