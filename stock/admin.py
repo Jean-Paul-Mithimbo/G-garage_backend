@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Article, Stock,Fournisseurs
+    Article, Stock,Fournisseurs,
     Entree, LigneEntree,
     Sortie, LigneSortie
 )

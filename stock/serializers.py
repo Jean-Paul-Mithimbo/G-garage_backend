@@ -21,7 +21,7 @@
 
 from rest_framework import serializers
 from .models import (
-    Fournisseur,
+    Fournisseurs,
     Article, Stock,
     Entree, LigneEntree,
     Sortie, LigneSortie

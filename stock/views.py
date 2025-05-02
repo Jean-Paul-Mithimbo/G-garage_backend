@@ -12,7 +12,7 @@ from .models import (
 )
 from .serializers import (
     ArticleSerializer, StockSerializer,
-    EntreeSerializer, SortieSerializer,FournisseurSerializer
+    EntreeSerializer, SortieSerializer,FournisseursSerializer
 )
 
 class FournisseursViewSet(viewsets.ModelViewSet):
@@ -20,7 +20,7 @@ class FournisseursViewSet(viewsets.ModelViewSet):
     CRUD Article.
     À la création d’un article, on crée aussi son stock initial à 0.
     """
-    queryset = Fournisseursobjects.all()
+    queryset = Fournisseurs.objects.all()
     serializer_class = FournisseursSerializer
 
 class ArticleViewSet(viewsets.ModelViewSet):
