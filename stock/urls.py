@@ -32,5 +32,5 @@ router.register('sorties',  SortieViewSet,  basename='sortie')
 
 urlpatterns = [
     # Toutes les routes CRUD générées par DRF
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
 ]
