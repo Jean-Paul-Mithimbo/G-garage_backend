@@ -15,6 +15,7 @@
 # app/urls.py
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
+from .views import fiche_stock_article_pdf
 from .views import (
     FournisseursViewSet,
     ArticleViewSet,
@@ -32,5 +33,6 @@ router.register('sorties',  SortieViewSet,  basename='sortie')
 
 urlpatterns = [
     # Toutes les routes CRUD générées par DRF
+    path('fiche/article/<int:article_id>/',fiche_stock_article_pdf,name='fiche-stock-article-pdf'),
     path('', include(router.urls)),
 ]

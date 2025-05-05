@@ -15,6 +15,23 @@ from .serializers import (
     EntreeSerializer, SortieSerializer,FournisseursSerializer
 )
 
+# repport lab
+
+import io
+from datetime import datetime
+from django.shortcuts        import get_object_or_404
+from django.http             import HttpResponse
+from reportlab.lib.pagesizes import A4
+from reportlab.lib           import colors
+from reportlab.lib.units     import mm
+from reportlab.platypus      import (
+    SimpleDocTemplate, Paragraph,
+    Spacer, Table, TableStyle
+)
+from reportlab.lib.styles    import getSampleStyleSheet, ParagraphStyle
+from django.utils.timezone   import localtime
+
+
 class FournisseursViewSet(viewsets.ModelViewSet):
     """
     CRUD Article.
@@ -298,3 +315,372 @@ class SortieViewSet(viewsets.ModelViewSet):
             # Suppression de la sortie
             sortie_instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+# # fiche de stock
+# def fiche_stock_article_pdf(request, article_id):
+#     """
+#     Génère un PDF « FICHE DE STOCK » identique au modèle envoyé,
+#     avec en-tête Université, N°, Nom, Code, Unité, et tableau complet FIFO.
+#     """
+#     # 1️⃣ Charger l’article
+#     article = get_object_or_404(Article, pk=article_id)
+
+#     # 2️⃣ Préparer le buffer et le document
+#     buffer   = io.BytesIO()
+#     document = SimpleDocTemplate(
+#         buffer,
+#         pagesize=A4,
+#         leftMargin=15*mm, rightMargin=15*mm,
+#         topMargin=20*mm, bottomMargin=20*mm,
+#     )
+
+#     # 3️⃣ Styles
+#     styles      = getSampleStyleSheet()
+#     title_style = ParagraphStyle(
+#         'Title', parent=styles['Heading2'],
+#         alignment=1, fontSize=14, spaceAfter=4*mm
+#     )
+#     normal      = styles['Normal']
+
+#     elements = []
+
+#     # 4️⃣ En-tête fixe
+#     elements.append(Paragraph("UNIVERSITÉ ADVENTISTE DE LUKANGA", normal))
+#     elements.append(Paragraph("B.P 180 BUTEMBO", normal))
+#     elements.append(Spacer(1, 3*mm))
+#     elements.append(Paragraph("<b>FICHE DE STOCK</b>", title_style))
+#     elements.append(Spacer(1, 2*mm))
+
+#     # Zone d’identification
+#     #    Nom de l’Article, Code, Unité, N°
+#     #    (on suppose que Article a les attributs code et unite)
+#     header_data = [
+#         ["Nom de l’Article :", article.nom, "N° :", str(article.pk)],
+#         ["Code :", getattr(article, 'code', '—'), "Unité :", getattr(article, 'unite', 'pcs')],
+#     ]
+#     header_table = Table(header_data, colWidths=[30*mm, 70*mm, 15*mm, 30*mm])
+#     header_table.setStyle(TableStyle([
+#         ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+#         ('FONTNAME', (0,0), (-1,-1), 'Helvetica'),
+#         ('FONTSIZE', (0,0), (-1,-1), 10),
+#         ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+#     ]))
+#     elements.append(header_table)
+#     elements.append(Spacer(1, 4*mm))
+
+#     # 6️⃣ Préparer le tableau des mouvements
+#     columns = [
+#         "Date", "Désignation",
+#         "Entrées Qté", "Entrées PU", "Entrées PT",
+#         "Sorties Qté","Sorties PU","Sorties PT",
+#         "Stocks Qté","Stocks PU","Stocks PT",
+#         "Observations"
+#     ]
+#     table_data = [columns]
+
+#     # Charger et fusionner mouvements
+#     ents = LigneEntree.objects.filter(article=article).values(
+#         'date_entree','quantite','prix_unitaire','entree__libele'
+#     )
+#     sors = LigneSortie.objects.filter(article=article).values(
+#         'date_sortie','quantite','sortie__motif'
+#     )
+#     mouvements = []
+#     for e in ents:
+#         mouvements.append({
+#             'date'         : e['date_entree'].date(),
+#             'designation'  : e['entree__libele'] or "Entrée",
+#             'q_in'         : e['quantite'],
+#             'pu_in'        : float(e['prix_unitaire']),
+#             'q_out'        : 0,
+#             'obs'          : ""
+#         })
+#     for s in sors:
+#         mouvements.append({
+#             'date'         : s['date_sortie'].date(),
+#             'designation'  : s['sortie__motif'] or "Sortie",
+#             'q_in'         : 0,
+#             'pu_in'        : 0,
+#             'q_out'        : s['quantite'],
+#             'obs'          : ""
+#         })
+#     mouvements.sort(key=lambda m: m['date'])
+
+#     # FIFO et calculs
+#     fifo_layers = []   # [ [qty, pu], ... ]
+#     stock_qty    = 0
+#     stock_val    = 0
+
+#     for mv in mouvements:
+#         # renseigner variables ligne
+#         date_str = mv['date'].strftime('%d/%m/%Y')
+#         desig    = mv['designation']
+#         q_in     = mv['q_in']
+#         pu_in    = mv['pu_in']
+#         pt_in    = q_in * pu_in if q_in else 0
+
+#         q_out     = mv['q_out']
+#         # détail FIFO pour sorties
+#         pt_out = 0
+#         pu_out = 0
+#         detail  = ""
+#         if q_in:
+#             # entrée : on empile
+#             fifo_layers.append([q_in, pu_in])
+#             stock_qty += q_in
+#             stock_val += pt_in
+#         else:
+#             # sortie : on prélève en FIFO
+#             reste = q_out
+#             parts = []
+#             for layer in fifo_layers:
+#                 if reste == 0:
+#                     break
+#                 take = min(layer[0], reste)
+#                 pt_out += take * layer[1]
+#                 parts.append(f"{take}@{layer[1]:.2f}")
+#                 layer[0] -= take
+#                 reste -= take
+#             fifo_layers = [l for l in fifo_layers if l[0]>0]
+#             stock_qty -= q_out
+#             stock_val -= pt_out
+#             pu_out = 0  # on n’affiche pas un PU unique
+#             detail = " + ".join(parts)
+
+#         # remplir la ligne du tableau
+#         row = [
+#             date_str,
+#             desig[:20],                   # tronquer si trop long
+#             str(q_in) if q_in else "",    # Entrées Qté
+#             f"{pu_in:.2f}" if q_in else "",
+#             f"{pt_in:.2f}" if q_in else "",
+#             str(q_out) if q_out else "",
+#             "" if q_out==0 else "FIFO",
+#             f"{pt_out:.2f}" if q_out else "",
+#             str(stock_qty),
+#             f"{(stock_val/stock_qty):.2f}" if stock_qty else "",
+#             f"{stock_val:.2f}",
+#             detail
+#         ]
+#         table_data.append(row)
+
+#     # ajouter la ligne de solde mensuel (optionnel)
+#     table_data.append([
+#         "", "SOLDE MENSUEL",
+#         "", "", "",
+#         "", "", "",
+#         str(stock_qty), "", f"{stock_val:.2f}", ""
+#     ])
+
+#     # 7️⃣ Style et insertion du tableau
+#     col_widths = [20*mm, 30*mm] + [15*mm]*8 + [40*mm]
+#     table = Table(table_data, colWidths=col_widths, repeatRows=1)
+#     table.setStyle(TableStyle([
+#         ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+#         ('GRID',       (0,0), (-1,-1), 0.5, colors.grey),
+#         ('VALIGN',     (0,0), (-1,-1), 'MIDDLE'),
+#         ('ALIGN',      (2,1), (-3,-1), 'RIGHT'),
+#         ('FONTNAME',   (0,0), (-1,0), 'Helvetica-Bold'),
+#     ]))
+#     elements.append(table)
+
+#     # 8️⃣ Pied de page
+#     elements.append(Spacer(1,4*mm))
+#     elements.append(Paragraph("© UNIVERSITÉ ADVENTISTE DE LUKANGA", normal))
+
+#     # 9️⃣ Générer le PDF
+#     document.build(elements)
+#     buffer.seek(0)
+#     return HttpResponse(
+#         buffer,
+#         content_type='application/pdf',
+#         headers={
+#             # 'Content-Disposition':
+#             # f'attachment; filename="FICHE_DE_STOCK_{article.nom}.pdf"'
+#             'Content-Disposition': f'inline; filename="fiche_stock_article_{article_id}.pdf"'
+
+#         }
+#     )
+
+
+
+
+def fiche_stock_article_pdf(request, article_id):
+    """
+    Génère un PDF « FICHE DE STOCK » reprenant exactement
+    le design reçu, avec logique FIFO.
+    """
+    # Récupérer l’article (ou 404)
+    article = get_object_or_404(Article, pk=article_id)
+
+    # Préparation du buffer et du document
+    buffer   = io.BytesIO()
+    doc      = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        leftMargin=15*mm, rightMargin=15*mm,
+        topMargin=20*mm, bottomMargin=20*mm
+    )
+
+    # Styles
+    styles      = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'Title', parent=styles['Heading2'],
+        alignment=1, fontSize=14, spaceAfter=4*mm
+    )
+    normal      = styles['Normal']
+
+    elements = []
+
+    # En-tête fixe
+    elements.append(Paragraph("UNIVERSITÉ ADVENTISTE DE LUKANGA", normal))
+    elements.append(Paragraph("B.P 180 BUTEMBO", normal))
+    elements.append(Spacer(1, 3*mm))
+    elements.append(Paragraph("<b>FICHE DE STOCK</b>", title_style))
+    elements.append(Spacer(1, 2*mm))
+
+    # Zone d’identification
+    header_data = [
+        ["Nom de l’Article :", article.nom, "N° :", str(article.pk)],
+        ["Code :", getattr(article, 'code', '—'), "Unité :", getattr(article, 'unite', 'pcs')],
+    ]
+    header_table = Table(header_data, colWidths=[30*mm, 65*mm, 15*mm, 30*mm])
+    header_table.setStyle(TableStyle([
+        ('VALIGN',      (0,0), (-1,-1), 'MIDDLE'),
+        ('FONTNAME',    (0,0), (-1,-1), 'Helvetica'),
+        ('FONTSIZE',    (0,0), (-1,-1), 10),
+        ('BOTTOMPADDING',(0,0),(-1,-1),4),
+    ]))
+    elements.append(header_table)
+    elements.append(Spacer(1, 4*mm))
+
+    # Charger mouvements
+    entrees = LigneEntree.objects.filter(article=article).values(
+        'date_entree','quantite','prix_unitaire','entree__libele'
+    )
+    sorties = LigneSortie.objects.filter(article=article).values(
+        'date_sortie','quantite','sortie__motif'
+    )
+    mouvements = []
+    for e in entrees:
+        mouvements.append({
+            'date':         e['date_entree'].date(),
+            'designation':  e['entree__libele'] or "Entrée",
+            'q_in':         e['quantite'],
+            'pu_in':        float(e['prix_unitaire']),
+            'q_out':        0,
+        })
+    for s in sorties:
+        mouvements.append({
+            'date':         s['date_sortie'].date(),
+            'designation':  s['sortie__motif'] or "Sortie",
+            'q_in':         0,
+            'pu_in':        0.0,
+            'q_out':        s['quantite'],
+        })
+    mouvements.sort(key=lambda m: m['date'])
+
+    # Préparer données de tableau
+    fifo_layers = []
+    stock_qty    = 0
+    stock_val    = 0
+
+    table_data = [[
+        "Date", "Désignation",
+        "Entrées Qté","Entrées PU","Entrées PT",
+        "Sorties Qté","Sorties PT",
+        "Stock Qté","Stock PU","Stock PT",
+        "Observations"
+    ]]
+
+    for mv in mouvements:
+        date_str = mv['date'].strftime('%d/%m/%Y')
+        desig    = mv['designation'][:20]
+        q_in     = mv['q_in']
+        pu_in    = mv['pu_in']
+        pt_in    = q_in * pu_in
+        q_out    = mv['q_out']
+        detail   = ""
+        pt_out   = 0.0
+
+        if q_in:
+            # Entrée
+            fifo_layers.append([q_in, pu_in])
+            stock_qty += q_in
+            stock_val += pt_in
+            row = [
+                date_str, desig,
+                str(q_in), f"{pu_in:.2f}", f"{pt_in:.2f}",
+                "", "", str(stock_qty),
+                f"{(stock_val/stock_qty):.2f}", f"{stock_val:.2f}", ""
+            ]
+        else:
+            # Sortie FIFO
+            reste = q_out
+            parts = []
+            for layer in fifo_layers:
+                if reste == 0: break
+                take = min(layer[0], reste)
+                pt_out += take * layer[1]
+                parts.append(f"{take}@{layer[1]:.2f}")
+                layer[0] -= take
+                reste -= take
+            fifo_layers = [l for l in fifo_layers if l[0] > 0]
+            stock_qty -= q_out
+            stock_val -= pt_out
+            detail = " + ".join(parts)
+            row = [
+                date_str, desig,
+                "", "", "",
+                str(q_out), f"{pt_out:.2f}",
+                str(stock_qty), f"{(stock_val/stock_qty if stock_qty else 0):.2f}",
+                f"{stock_val:.2f}", detail
+            ]
+
+        table_data.append(row)
+
+    # Ligne de SOLDE
+    table_data.append([
+        "", "SOLDE FINAL",
+        "", "", "",
+        "", "",
+        str(stock_qty), "", f"{stock_val:.2f}", ""
+    ])
+
+    # Colonnes calibrées à la largeur A4 utile (~180mm)
+    col_widths = [
+        20*mm,  35*mm,
+         15*mm, 15*mm, 15*mm,
+         15*mm, 15*mm,
+         15*mm, 15*mm, 15*mm,
+         40*mm
+    ]
+
+    # Construction du tableau, aligné à gauche
+    table = Table(table_data, colWidths=col_widths, repeatRows=1, hAlign='LEFT')
+    table.setStyle(TableStyle([
+        ('BACKGROUND',     (0,0), (-1,0),   colors.lightgrey),
+        ('FONTNAME',       (0,0), (-1,0),   'Helvetica-Bold'),
+        ('ALIGN',          (2,1), (-1,-1),  'RIGHT'),
+        ('VALIGN',         (0,0), (-1,-1),  'MIDDLE'),
+        ('GRID',           (0,0), (-1,-1),  0.5, colors.grey),
+        ('ROWBACKGROUNDS', (0,1), (-1,-1),  [colors.whitesmoke, None]),
+        ('BOTTOMPADDING',  (0,0), (-1,0),   6),
+        ('TOPPADDING',     (0,0), (-1,0),   6),
+    ]))
+    elements.append(table)
+
+    # Pied de page
+    elements.append(Spacer(1, 4*mm))
+    elements.append(Paragraph("© UNIVERSITÉ ADVENTISTE DE LUKANGA", normal))
+
+    # Génération du PDF
+    doc.build(elements)
+    buffer.seek(0)
+    return HttpResponse(
+        buffer,
+        content_type='application/pdf',
+        headers={'Content-Disposition': f'inline; filename="FICHE_DE_STOCK_{article.pk}.pdf"'}
+    )
