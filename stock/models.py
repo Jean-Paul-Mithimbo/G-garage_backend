@@ -77,7 +77,7 @@ class Entree(models.Model):
     date_op = models.DateField()
 
     def __str__(self):
-        return f"Entrée du #{self.date_entree}"
+        return f"Entrée du #{self.date_op}"
 
 class LigneEntree(models.Model):
     entree = models.ForeignKey(Entree, related_name='lignes', on_delete=models.CASCADE)
