@@ -8,6 +8,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
+from django.shortcuts import render
+
+def api_home(request):
+    return render(request, "api_home.html")
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Garage Management API",
@@ -21,6 +26,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', api_home, name='api_home'),
     path('api/auth/', include('authentication.urls')),
     path('api/rgh/', include('ressources_humaine.urls')),
     path('api/clients/', include('clients.urls')),
