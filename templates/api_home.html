@@ -2,57 +2,82 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Bienvenue sur l'API G-Garage</title>
+    <title>API G-Garage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
-            background: #f7f7f7;
+            background: linear-gradient(120deg, #2d7be5 0%, #6dd5ed 100%);
             font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
         }
-        .container {
+        .card {
             background: #fff;
-            padding: 2rem 3rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 2.5rem 3.5rem;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(44,123,229,0.15);
             text-align: center;
+            max-width: 420px;
+        }
+        .logo {
+            width: 70px;
+            margin-bottom: 1rem;
         }
         h1 {
             color: #2d7be5;
-            margin-bottom: 0.5em;
+            margin-bottom: 0.3em;
+            font-size: 2.1em;
         }
         p {
             color: #444;
-            font-size: 1.1em;
+            font-size: 1.15em;
+            margin-bottom: 2em;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1em;
+            justify-content: center;
         }
         a.button {
             display: inline-block;
-            margin-top: 1.5em;
-            padding: 0.7em 2em;
+            padding: 0.7em 1.7em;
             background: #2d7be5;
             color: #fff;
             border-radius: 6px;
             text-decoration: none;
-            font-weight: bold;
-            transition: background 0.2s;
+            font-weight: 500;
+            font-size: 1em;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(44,123,229,0.08);
         }
         a.button:hover {
             background: #1a5bb8;
         }
+        .footer {
+            margin-top: 2em;
+            font-size: 0.95em;
+            color: #888;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Bienvenue sur l'API G-Garage 🚗</h1>
+    <div class="card">
+        <!-- <img src="/static/logo.png" alt="Logo G-Garage" class="logo"> -->
+        <h1>API G-Garage 🚗</h1>
         <p>
-            Cette API permet de gérer les interventions, véhicules, clients et plus encore.<br>
-            Utilisez la documentation pour explorer les endpoints disponibles.
+            Bienvenue sur l’API professionnelle de gestion de garage.<br>
+            Consultez la documentation interactive pour explorer tous les endpoints disponibles.
         </p>
-        <a href="/docs/" class="button">Voir la documentation</a>
+        <div class="btn-group">
+            <a href="/swagger/" class="button" target="_blank">Swagger UI</a>
+            <a href="/redoc/" class="button" target="_blank" style="background:#f44336;">Redoc</a>
+        </div>
+        <div class="footer">
+            &copy; 2025 G-Garage &mdash; API pour professionnels de l’automobile
+        </div>
     </div>
 </body>
 </html>
