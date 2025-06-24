@@ -80,7 +80,8 @@ ROOT_URLCONF = 'garage.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # 'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # <-- le dossier où se trouve api_home.html
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
