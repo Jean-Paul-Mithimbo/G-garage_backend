@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
+import dj_database_url
+
+# Chemin vers le fichier .env
+load_dotenv(".env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-=+x_&#fk&dx_x$*02hab5qnhw)ke4nj7j3b(gfc!-0h1hp)lpw')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.0.200']  
 ALLOWED_HOSTS = ['*'] # À UTILISER AVEC PRÉCAUTION ET UNIQUEMENT POUR DU DÉVELOPPEMENT LOCAL TEMPORAIRE
@@ -58,6 +64,8 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # Ensure this is above CommonMiddleware
     'django.middleware.common.CommonMiddleware',
@@ -90,15 +98,18 @@ WSGI_APPLICATION = 'garage.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'g-garage',
+#         'USER': 'jp',
+#         'PASSWORD': '1234',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     },
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'g-garage',
-        'USER': 'jp',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    },
+    "default": dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
 
 # Configuration DRF for using JWT
