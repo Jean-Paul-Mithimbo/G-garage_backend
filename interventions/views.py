@@ -2,13 +2,13 @@ from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
-from .models import Vehicule, Panne, EquipeReparation, Intervention, Facture, HistoriqueReparation, LignePanne, MaterielUtilise
+from .models import Vehicule, Panne, EquipeReparation, Intervention, Facture, HistoriqueReparation, LignePanne, MaterielUtilise, InterventionDraft
 from clients.models import Client
 from clients.serializers import ClientSerializer
 from .serializers import (
     VehiculeSerializer, PanneSerializer,EquipeReparationSerializer,
     InterventionSerializer, FactureSerializer, HistoriqueReparationSerializer,
-    LignePanneSerializer, MaterielUtiliseSerializer
+    LignePanneSerializer, MaterielUtiliseSerializer, InterventionDraftSerializer
 )
 
 
@@ -74,7 +74,7 @@ class PanneViewSet(viewsets.ModelViewSet):
     serializer_class = PanneSerializer
 
 class InterventionViewSet(viewsets.ModelViewSet):
-    queryset = Intervention.objects.all()
+    queryset = Intervention.objects.all().select_related('vehicule', 'client', 'equipe').prefetch_related('lignes_pannes', 'materiels_utilises', 'facture')
     serializer_class = InterventionSerializer
 
 class LignePanneViewSet(viewsets.ModelViewSet):
@@ -92,3 +92,7 @@ class FactureViewSet(viewsets.ModelViewSet):
 class HistoriqueReparationViewSet(viewsets.ModelViewSet):
     queryset = HistoriqueReparation.objects.all()
     serializer_class = HistoriqueReparationSerializer
+
+class InterventionDraftViewSet(viewsets.ModelViewSet):
+    queryset = InterventionDraft.objects.all()
+    serializer_class = InterventionDraftSerializer

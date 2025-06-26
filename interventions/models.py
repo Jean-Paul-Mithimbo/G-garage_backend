@@ -2,6 +2,7 @@ from django.db import models
 from clients.models import Client
 from ressources_humaine.models import Employe
 from stock.models import Stock
+from django.contrib.auth import get_user_model
 
 # # Modèle Client
 # class Client(models.Model):
@@ -56,6 +57,12 @@ class Intervention(models.Model):
 
     def __str__(self):
         return f"Intervention {self.id} - {self.vehicule.immatriculation if self.vehicule else 'Aucun véhicule'}"
+
+class InterventionDraft(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="drafts")
+    data = models.JSONField()  # Toutes les infos du brouillon (étapes, valeurs, etc.)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 # Modèle Ligne de Panne
 class LignePanne(models.Model):

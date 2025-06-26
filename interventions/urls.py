@@ -4,21 +4,22 @@ from .views import (
     DetailClient, ListeVehicules, ListePannes, EquipesViewSet,
     ListeInterventions, ListeHistoriques, AffecterEquipe, CloturerIntervention,
     VehiculeViewSet, PanneViewSet, InterventionViewSet, LignePanneViewSet,
-    MaterielUtiliseViewSet, FactureViewSet, HistoriqueReparationViewSet
+    MaterielUtiliseViewSet, FactureViewSet, HistoriqueReparationViewSet,
+    InterventionDraftViewSet
 )
 
 router = DefaultRouter()
 router.register('vehicules', VehiculeViewSet)  # Matches VehiculeViewSet in views.py
 router.register('pannes', PanneViewSet)  # Matches PanneViewSet in views.py
+router.register('equipes', EquipesViewSet)  # equipe
 router.register('interventions', InterventionViewSet)  # Matches InterventionViewSet in views.py
 router.register('lignes-pannes', LignePanneViewSet)  # Matches LignePanneViewSet in views.py
-router.register('equipes', EquipesViewSet)  # equipe
 router.register('materiels-utilises', MaterielUtiliseViewSet)  # Matches MaterielUtiliseViewSet in views.py
 router.register('factures', FactureViewSet)  # Matches FactureViewSet in views.py
 router.register('historiques-reparations', HistoriqueReparationViewSet)  # Matches HistoriqueReparationViewSet in views.py
+router.register('drafts', InterventionDraftViewSet)  # Matches InterventionDraftViewSet in views.py
 
 urlpatterns = [
-  
     path('clients/<int:pk>/', DetailClient.as_view(), name='detail_client'),  # Matches DetailClient in views.py
     # path('vehicules/', ListeVehicules.as_view(), name='liste_vehicules'),  # Matches ListeVehicules in views.py
     # path('pannes/', ListePannes.as_view(), name='liste_pannes'),  # Matches ListePannes in views.py
