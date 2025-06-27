@@ -52,7 +52,12 @@ class FactureAdmin(admin.ModelAdmin):
 class HistoriqueReparationAdmin(admin.ModelAdmin):
     list_display = ['id', 'intervention', 'date_archivage']
 
+# @admin.register(InterventionDraft)
+# class InterventionDraftAdmin(admin.ModelAdmin):
+#     list_display = ['id', 'user', 'created_at', 'updated_at']
+
 @admin.register(InterventionDraft)
 class InterventionDraftAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'created_at', 'updated_at']
-
+    list_display = ('id', 'user', 'created_at', 'updated_at')
+    search_fields = ('user__username',)
+    list_filter = ('created_at', 'updated_at')

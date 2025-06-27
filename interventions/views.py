@@ -1,4 +1,4 @@
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets,permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
@@ -93,6 +93,20 @@ class HistoriqueReparationViewSet(viewsets.ModelViewSet):
     queryset = HistoriqueReparation.objects.all()
     serializer_class = HistoriqueReparationSerializer
 
+# class InterventionDraftViewSet(viewsets.ModelViewSet):
+#     queryset = InterventionDraft.objects.all()
+#     serializer_class = InterventionDraftSerializer
+
+
 class InterventionDraftViewSet(viewsets.ModelViewSet):
-    queryset = InterventionDraft.objects.all()
+    queryset = InterventionDraft.objects.all()  # <-- AJOUTE CETTE LIGNE
     serializer_class = InterventionDraftSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Chaque utilisateur ne voit que ses brouillons
+        return InterventionDraft.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Associe automatiquement le brouillon à l'utilisateur connecté
+        serializer.save(user=self.request.user)

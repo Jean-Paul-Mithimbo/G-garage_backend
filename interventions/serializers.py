@@ -45,6 +45,12 @@ class InterventionSerializer(serializers.ModelSerializer):
         model = Intervention
         fields = '__all__'
 
+# class InterventionDraftSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = InterventionDraft
+#         fields = ['id', 'user', 'data', 'created_at', 'updated_at']
+#         read_only_fields = ['id', 'user', 'created_at', 'updated_at']
+
 class InterventionDraftSerializer(serializers.ModelSerializer):
     class Meta:
         model = InterventionDraft

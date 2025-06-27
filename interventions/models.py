@@ -58,11 +58,21 @@ class Intervention(models.Model):
     def __str__(self):
         return f"Intervention {self.id} - {self.vehicule.immatriculation if self.vehicule else 'Aucun véhicule'}"
 
+# class InterventionDraft(models.Model):
+#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="drafts")
+#     data = models.JSONField()  # Toutes les infos du brouillon (étapes, valeurs, etc.)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+
+
 class InterventionDraft(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="drafts")
     data = models.JSONField()  # Toutes les infos du brouillon (étapes, valeurs, etc.)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Brouillon #{self.id} de {self.user}"
 
 # Modèle Ligne de Panne
 class LignePanne(models.Model):
