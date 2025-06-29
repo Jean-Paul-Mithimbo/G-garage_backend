@@ -31,17 +31,25 @@ class EquipeReparationSerializer(serializers.ModelSerializer):
 #         model = MaterielUtilise
 #         fields = ['id', 'intervention', 'stock', 'quantite']
 
+
+# Lecture détaillée (read) : panne = PanneSerializer(read_only=True)
+# Création/édition (write) : panne = PrimaryKeyRelatedField(queryset=...)
 class LignePanneSerializer(serializers.ModelSerializer):
-    panne = serializers.PrimaryKeyRelatedField(queryset=Panne.objects.all())
+    panne = PanneSerializer(read_only=True)
+    panne_id = serializers.PrimaryKeyRelatedField(queryset=Panne.objects.all(), source='panne', write_only=True)
     class Meta:
         model = LignePanne
-        fields = ['id', 'intervention', 'panne', 'description', 'date_signalement']
+        fields = ['id', 'intervention', 'panne', 'panne_id', 'description', 'date_signalement']
 
+
+# Lecture détaillée (read) : stock = StringRelatedField(read_only=True)
+# Création/édition (write) : stock_id = PrimaryKeyRelatedField(queryset=...)
 class MaterielUtiliseSerializer(serializers.ModelSerializer):
-    stock = serializers.PrimaryKeyRelatedField(queryset=Stock.objects.all())
+    stock = serializers.StringRelatedField(read_only=True)
+    stock_id = serializers.PrimaryKeyRelatedField(queryset=Stock.objects.all(), source='stock', write_only=True)
     class Meta:
         model = MaterielUtilise
-        fields = ['id', 'intervention', 'stock', 'quantite']
+        fields = ['id', 'intervention', 'stock', 'stock_id', 'quantite']
 
 class FactureSerializer(serializers.ModelSerializer):
     montant_total = serializers.SerializerMethodField()
