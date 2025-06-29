@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import (
     Vehicule, Panne, EquipeReparation,Intervention, LignePanne, MaterielUtilise, Facture, HistoriqueReparation,InterventionDraft
 )
+from stock.models import Stock
+from clients.models import Client
 
 class VehiculeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,14 +19,26 @@ class EquipeReparationSerializer(serializers.ModelSerializer):
         model = EquipeReparation
         fields = '__all__'
 
+# class LignePanneSerializer(serializers.ModelSerializer):
+#     panne = PanneSerializer(read_only=True)
+#     class Meta:
+#         model = LignePanne
+#         fields = ['id', 'intervention', 'panne', 'description', 'date_signalement']
+
+# class MaterielUtiliseSerializer(serializers.ModelSerializer):
+#     stock = serializers.StringRelatedField()
+#     class Meta:
+#         model = MaterielUtilise
+#         fields = ['id', 'intervention', 'stock', 'quantite']
+
 class LignePanneSerializer(serializers.ModelSerializer):
-    panne = PanneSerializer(read_only=True)
+    panne = serializers.PrimaryKeyRelatedField(queryset=Panne.objects.all())
     class Meta:
         model = LignePanne
         fields = ['id', 'intervention', 'panne', 'description', 'date_signalement']
 
 class MaterielUtiliseSerializer(serializers.ModelSerializer):
-    stock = serializers.StringRelatedField()
+    stock = serializers.PrimaryKeyRelatedField(queryset=Stock.objects.all())
     class Meta:
         model = MaterielUtilise
         fields = ['id', 'intervention', 'stock', 'quantite']

@@ -47,7 +47,7 @@ class EquipeReparation(models.Model):
 class Intervention(models.Model):
     id = models.AutoField(primary_key=True)
     vehicule = models.ForeignKey(Vehicule, related_name='interventions', on_delete=models.CASCADE, null=True, blank=True)  # Allow null values
-    immatriculation = models.CharField(max_length=50, unique=True)
+    immatriculation = models.CharField(max_length=50, null=True, blank=True)  # Optional field for immatriculation
     client = models.ForeignKey(Client, related_name='vehicules', on_delete=models.CASCADE)
     equipe = models.ForeignKey(EquipeReparation, related_name='interventions', on_delete=models.SET_NULL, null=True)
     date_debut = models.DateTimeField(auto_now_add=True)
