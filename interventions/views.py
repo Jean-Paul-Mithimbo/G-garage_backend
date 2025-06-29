@@ -80,6 +80,7 @@ class InterventionViewSet(viewsets.ModelViewSet):
 class LignePanneViewSet(viewsets.ModelViewSet):
     queryset = LignePanne.objects.all()
     serializer_class = LignePanneSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class MaterielUtiliseViewSet(viewsets.ModelViewSet):
     queryset = MaterielUtilise.objects.all()
@@ -101,7 +102,7 @@ class HistoriqueReparationViewSet(viewsets.ModelViewSet):
 class InterventionDraftViewSet(viewsets.ModelViewSet):
     queryset = InterventionDraft.objects.all()  # <-- AJOUTE CETTE LIGNE
     serializer_class = InterventionDraftSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         # Chaque utilisateur ne voit que ses brouillons
