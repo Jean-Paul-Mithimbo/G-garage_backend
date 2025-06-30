@@ -59,7 +59,14 @@ class FactureSerializer(serializers.ModelSerializer):
     def get_montant_total(self, obj):
         return obj.calculer_montant_total()
 
-f
+class InterventionSerializer(serializers.ModelSerializer):
+    lignes_pannes = LignePanneSerializer(many=True, read_only=True)
+    materiels_utilises = MaterielUtiliseSerializer(many=True, read_only=True)
+    facture = FactureSerializer(read_only=True)
+    class Meta:
+        model = Intervention
+        fields = '__all__'
+        depth = 1  # Pour inclure les relations FK de base (dont vehicule)
 
 # class InterventionDraftSerializer(serializers.ModelSerializer):
 #     class Meta:
