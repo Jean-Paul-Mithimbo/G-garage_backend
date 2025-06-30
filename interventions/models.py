@@ -56,7 +56,7 @@ class Intervention(models.Model):
     statut = models.CharField(max_length=50, choices=[('en_cours', 'En cours'), ('terminee', 'Terminée'), ('annulee', 'Annulée')], default='en_cours')
 
     def __str__(self):
-        return f"Intervention {self.id} - {self.vehicule.immatriculation if self.vehicule else 'Aucun véhicule'}"
+        return f"Intervention {self.id} - {self.vehicule.marque if self.vehicule else 'Aucun véhicule'}"
 
 # class InterventionDraft(models.Model):
 #     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="drafts")
