@@ -66,7 +66,7 @@ class InterventionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Intervention
         fields = '__all__'
-        # depth = 1  # Pour inclure les relations FK de base (dont vehicule)
+        depth = 1  # Pour inclure les relations FK de base (dont vehicule)
 
 # class InterventionDraftSerializer(serializers.ModelSerializer):
 #     class Meta:
