@@ -147,10 +147,13 @@ class Facture(models.Model):
 
     def calculer_montant_total(self):
         """Calcule le montant total de la facture (main d'œuvre + matériel)."""
-        montant_materiels = sum(
-            materiel.quantite * materiel.stock.prix_unitaire
-            for materiel in self.intervention.materiels_utilises.all()
-        )
+        from stock.models import LigneEntree
+        montant_materiels = 0
+        for materiel in self.intervention.materiels_utilises.all():
+            # Cherche la dernière entrée pour cet article
+            ligne_entree = LigneEntree.objects.filter(article=materiel.stock.article).order_by('-date_entree').first()
+            prix_unitaire = ligne_entree.prix_unitaire if ligne_entree else 0
+            montant_materiels += materiel.quantite * prix_unitaire
         return self.montant_main_oeuvre + montant_materiels
 
     def __str__(self):
