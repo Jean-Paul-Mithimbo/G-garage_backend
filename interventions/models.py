@@ -92,15 +92,33 @@ class MaterielUtilise(models.Model):
     stock = models.ForeignKey(Stock, related_name='utilisations', on_delete=models.CASCADE)
     quantite = models.PositiveIntegerField()
 
+
     def save(self, *args, **kwargs):
-        """Diminue le stock lors de l'utilisation de matériel."""
-        if not self.pk:  # Only decrease stock on creation
-            self.stock.diminuer_quantite(self.quantite)
+        """Crée une sortie de stock lors de l'utilisation de matériel."""
+        from stock.models import Sortie, LigneSortie
+        is_new = self.pk is None
         super().save(*args, **kwargs)
+        if is_new:
+            # Crée une sortie et une ligne de sortie pour ce matériel utilisé
+            sortie = Sortie.objects.create(motif=f"Utilisation pour intervention {self.intervention.id}")
+            LigneSortie.objects.create(
+                sortie=sortie,
+                article=self.stock.article,
+                quantite=self.quantite
+            )
 
     def delete(self, *args, **kwargs):
-        """Restaure le stock si l'utilisation est supprimée."""
-        self.stock.ajouter_quantite(self.quantite)
+        """Crée une entrée de stock lors de la suppression de l'utilisation de matériel."""
+        from stock.models import Entree, LigneEntree
+        # On remet le stock via une entrée
+        entree = Entree.objects.create(libele=f"Annulation utilisation intervention {self.intervention.id}", date_op=self.intervention.date_debut.date())
+        LigneEntree.objects.create(
+            entree=entree,
+            article=self.stock.article,
+            quantite=self.quantite,
+            prix_unitaire=0,  # À adapter si besoin
+            date_expiration=None
+        )
         super().delete(*args, **kwargs)
 
     def __str__(self):
